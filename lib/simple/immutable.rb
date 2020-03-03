@@ -41,14 +41,14 @@ class Simple::Immutable
 
   public
 
+  def inspect
+    "<#{self.class.name}: #{@hsh.inspect}>"
+  end
+
   def respond_to_missing?(method_name, include_private = false)
     @hsh.key?(method_name.to_sym) ||
       @hsh.key?(method_name.to_s) ||
       super
-  end
-
-  def inspect
-    "<Immutable: #{@hsh.inspect}>"
   end
 
   def respond_to?(sym)
