@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+$: << "lib"
+require "simple/immutable"
+
+require "irb"
+require "irb/completion"
+
+IRB.start
