@@ -6,7 +6,7 @@ class Simple::Immutable
 
   # turns an object, which can be a hash or array of hashes, arrays, and scalars
   # into an object which you can use to access with dot methods.
-  def self.create(object, max_depth = 5)
+  def self.create(object, max_depth = 8)
     case object
     when Array
       raise ArgumentError, "Object nested too deep (or inner loop?)" if max_depth < 0
