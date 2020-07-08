@@ -1,3 +1,3 @@
 # rubocop:disable Naming/FileName
 
-require "simple/immutable"
+require_relative "simple/immutable"

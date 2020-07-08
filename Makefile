@@ -1,7 +1,9 @@
 default: test
 
+.PHONY: test
+
 test:
-	ruby lib/simple/immutable.rb
+	ruby test/immutable_test.rb
 	bin/rubocop
 
 release:
