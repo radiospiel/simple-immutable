@@ -30,6 +30,11 @@ class Simple::Immutable
     end
   end
 
+  # adds to_json support.
+  def as_json(opts)
+    @hsh.as_json(opts)
+  end
+
   private
 
   def initialize(hsh)
