@@ -67,7 +67,7 @@ class Simple::Immutable
       super
   end
 
-  def respond_to?(sym)
+  def respond_to?(sym, include_all = false)
     super || @hsh.key?(sym.to_s) || @hsh.key?(sym.to_sym)
   end
 
