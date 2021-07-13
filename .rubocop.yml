@@ -30,3 +30,6 @@ Style/NumericPredicate:
 
 Metrics/MethodLength:
   Max: 20
+
+Lint/IneffectiveAccessModifier:
+  Enabled: false

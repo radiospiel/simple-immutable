@@ -85,7 +85,6 @@ class Simple::Immutable::TestCase < Test::Unit::TestCase
   end
 
   def test_raw_data
-    immutable = Immutable.create(hsh)
     expected  = hsh
 
     assert_equal(expected, Immutable.raw_data(immutable))
