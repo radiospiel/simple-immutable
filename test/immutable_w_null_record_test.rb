@@ -16,11 +16,11 @@ class Simple::Immutable::WithNullRecordTestCase < Test::Unit::TestCase
           name: "grandchildname"
         }
       },
-      "children": [
+      "children" => [
         "anna",
         "arthur",
         {
-          action: {
+          "action" => {
             keep_your_mouth_shut: true
           }
         }

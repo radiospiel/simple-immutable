@@ -17,11 +17,11 @@ Turns a nested data structure into a immutable ruby object implementing dot and 
             name: "grandchildname"
           }
         },
-        "children": [
+        "children" => [
           "anna",
           "arthur",
           {
-            action: {
+            "action" => {
               keep_your_mouth_shut: true
             }
           }

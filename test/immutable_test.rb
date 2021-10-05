@@ -16,11 +16,11 @@ class Simple::Immutable::TestCase < Test::Unit::TestCase
           name: "grandchildname"
         }
       },
-      "children": [
+      "children" => [
         "anna",
         "arthur",
         {
-          action: {
+          "action" => {
             keep_your_mouth_shut: true
           }
         }
@@ -88,6 +88,6 @@ class Simple::Immutable::TestCase < Test::Unit::TestCase
     expected  = hsh
 
     assert_equal(expected, Immutable.raw_data(immutable))
-    assert_equal(expected[:children], Immutable.raw_data(immutable.children))
+    assert_equal(expected["children"], Immutable.raw_data(immutable.children))
   end
 end
