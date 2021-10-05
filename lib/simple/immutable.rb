@@ -42,7 +42,8 @@ class Simple::Immutable
 
   # adds to_json support.
   def as_json(opts)
-    @hsh.as_json(opts)
+    data = SELF.raw_data(self)
+    data.as_json(opts)
   end
 
   private
@@ -70,18 +71,23 @@ class Simple::Immutable
     raise ArgumentError, "Immutable: called attribute method with arguments" unless args.empty?
     raise ArgumentError, "Immutable: called attribute method with arguments" if block
 
-    # If the symbol ends in "?" we do not raise a NameError, but return nil
-    # if the attribute is not known.
-    check_mode = sym.end_with?("?")
-    if check_mode
+    if sym.end_with?("?")
+      # If the symbol ends in "?" we do not raise a NameError, but instead
+      # returns nil if the attribute is not known.
+      sym = sym[0...-1]
+
       # Note that sym is now a String. However, we are String/Symbol agnostic
       # (in fetch_symbol_or_string_from_hash), so this is ok.
-      sym = sym[0...-1]
+      fetch_attribute!(sym, raise_on_missing_attribute: false)
+    else
+      fetch_attribute!(sym, raise_on_missing_attribute: true)
     end
+  end
 
+  def fetch_attribute!(sym, raise_on_missing_attribute:)
     value = SELF.fetch_symbol_or_string_from_hash(@hsh, sym) do
       SELF.fetch_symbol_or_string_from_hash(@fallback, sym) do
-        raise NameError, "unknown immutable attribute '#{sym}'" unless check_mode
+        raise NameError, "unknown immutable attribute '#{sym}'" if raise_on_missing_attribute
 
         nil
       end
