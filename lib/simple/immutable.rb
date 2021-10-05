@@ -6,14 +6,17 @@ class Simple::Immutable
 
   # turns an object, which can be a hash or array of hashes, arrays, and scalars
   # into an object which you can use to access with dot methods.
-  def self.create(object, max_depth: 8, null_record: nil)
+  def self.create(object, max_depth: 8, null_record: nil, fallback: nil)
+    # Note that null_record is deprecated.
+    fallback ||= null_record
+
     case object
     when Array
       raise ArgumentError, "Object nested too deep (or inner loop?)" if max_depth < 0
 
-      object.map { |obj| create obj, null_record: null_record, max_depth: max_depth - 1 }
+      object.map { |obj| create obj, fallback: fallback, max_depth: max_depth - 1 }
     when Hash
-      new(object, null_record)
+      new(object, fallback)
     else
       object
     end
@@ -23,10 +26,10 @@ class Simple::Immutable
     case immutable
     when SELF
       hsh = immutable.instance_variable_get :@hsh
-      null_record = immutable.instance_variable_get :@null_record
+      fallback = immutable.instance_variable_get :@fallback
 
-      if null_record
-        null_record.merge(hsh)
+      if fallback
+        fallback.merge(hsh)
       else
         hsh
       end
@@ -44,9 +47,9 @@ class Simple::Immutable
 
   private
 
-  def initialize(hsh, null_record = nil)
+  def initialize(hsh, fallback = nil)
     @hsh = hsh
-    @null_record = null_record
+    @fallback = fallback
   end
 
   # rubycop:disable Lint/IneffectiveAccessModifier
@@ -69,16 +72,16 @@ class Simple::Immutable
 
     # If the symbol ends in "?" we do not raise a NameError, but return nil
     # if the attribute is not known.
-    test_mode = sym.end_with?("?")
-    if test_mode
+    check_mode = sym.end_with?("?")
+    if check_mode
       # Note that sym is now a String. However, we are String/Symbol agnostic
       # (in fetch_symbol_or_string_from_hash), so this is ok.
       sym = sym[0...-1]
     end
 
     value = SELF.fetch_symbol_or_string_from_hash(@hsh, sym) do
-      SELF.fetch_symbol_or_string_from_hash(@null_record, sym) do
-        raise NameError, "unknown immutable attribute '#{sym}'" unless test_mode
+      SELF.fetch_symbol_or_string_from_hash(@fallback, sym) do
+        raise NameError, "unknown immutable attribute '#{sym}'" unless check_mode
 
         nil
       end
@@ -98,11 +101,11 @@ class Simple::Immutable
 
     key = method_name.to_sym
     return true if @hsh.key?(key)
-    return true if @null_record&.key?(key)
+    return true if @fallback&.key?(key)
 
     key = method_name.to_s
     return true if @hsh.key?(key)
-    return true if @null_record&.key?(key)
+    return true if @fallback&.key?(key)
 
     super
   end

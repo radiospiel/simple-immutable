@@ -3,7 +3,7 @@
 require "test-unit"
 require_relative "../lib/simple-immutable"
 
-class Simple::Immutable::WithNullRecordTestCase < Test::Unit::TestCase
+class Simple::Immutable::WithFallbackTestCase < Test::Unit::TestCase
   Immutable = ::Simple::Immutable
 
   def hsh
@@ -28,7 +28,7 @@ class Simple::Immutable::WithNullRecordTestCase < Test::Unit::TestCase
     }
   end
 
-  def null_record
+  def fallback
     {
       foo: "foo-value",
       "bar" => "bar-value"
@@ -36,7 +36,7 @@ class Simple::Immutable::WithNullRecordTestCase < Test::Unit::TestCase
   end
 
   def immutable
-    Immutable.create hsh, null_record: null_record
+    Immutable.create hsh, fallback: fallback
   end
 
   def test_hash_access
@@ -44,7 +44,7 @@ class Simple::Immutable::WithNullRecordTestCase < Test::Unit::TestCase
     assert_equal "b-value", immutable.b
   end
 
-  def test_null_record_access
+  def test_fallback_access
     assert_equal "foo-value", immutable.foo
     assert_equal "bar-value", immutable.bar
   end
@@ -56,8 +56,8 @@ class Simple::Immutable::WithNullRecordTestCase < Test::Unit::TestCase
   end
 
   def test_raw_data
-    # raw data does contain null_record
-    expected = hsh.merge(null_record)
+    # raw data does contain fallback
+    expected = hsh.merge(fallback)
     assert_equal(expected, Immutable.raw_data(immutable))
   end
 end
