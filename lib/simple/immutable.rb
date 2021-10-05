@@ -90,6 +90,7 @@ class Simple::Immutable
       super
   end
 
+  # rubocop:disable Style/OptionalBooleanParameter
   def respond_to?(sym, include_all = false)
     super || @hsh.key?(sym.to_s) || @hsh.key?(sym.to_sym)
   end
