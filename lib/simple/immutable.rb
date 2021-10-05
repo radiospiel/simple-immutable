@@ -67,9 +67,20 @@ class Simple::Immutable
     raise ArgumentError, "Immutable: called attribute method with arguments" unless args.empty?
     raise ArgumentError, "Immutable: called attribute method with arguments" if block
 
+    # If the symbol ends in "?" we do not raise a NameError, but return nil
+    # if the attribute is not known.
+    test_mode = sym.end_with?("?")
+    if test_mode
+      # Note that sym is now a String. However, we are String/Symbol agnostic
+      # (in fetch_symbol_or_string_from_hash), so this is ok.
+      sym = sym[0...-1]
+    end
+
     value = SELF.fetch_symbol_or_string_from_hash(@hsh, sym) do
       SELF.fetch_symbol_or_string_from_hash(@null_record, sym) do
-        raise NameError, "unknown immutable attribute '#{sym}'"
+        raise NameError, "unknown immutable attribute '#{sym}'" unless test_mode
+
+        nil
       end
     end
 

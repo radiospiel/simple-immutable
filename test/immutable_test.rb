@@ -60,6 +60,22 @@ class Simple::Immutable::TestCase < Test::Unit::TestCase
     assert_equal true, immutable.children[2].action.keep_your_mouth_shut
   end
 
+  def test_child_access_w_question_mark
+    child = immutable.child?
+    assert_kind_of(Immutable, child)
+    assert_equal "childname", immutable.child.name?
+    assert_equal "grandchildname", immutable.child?.grandchild?.name?
+  end
+
+  def test_array_access_w_question_mark
+    assert_kind_of(Array, immutable.children?)
+    assert_equal 3, immutable.children?.length
+    assert_equal "anna", immutable.children?[0]
+
+    assert_kind_of(Immutable, immutable.children?[2])
+    assert_equal true, immutable.children[2].action?.keep_your_mouth_shut?
+  end
+
   def test_base_class
     assert_nothing_raised do
       immutable.object_id
