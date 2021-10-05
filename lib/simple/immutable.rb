@@ -94,9 +94,17 @@ class Simple::Immutable
   end
 
   def respond_to_missing?(method_name, include_private = false)
-    @hsh.key?(method_name.to_sym) ||
-      @hsh.key?(method_name.to_s) ||
-      super
+    return true if method_name.end_with?("?")
+
+    key = method_name.to_sym
+    return true if @hsh.key?(key)
+    return true if @null_record&.key?(key)
+
+    key = method_name.to_s
+    return true if @hsh.key?(key)
+    return true if @null_record&.key?(key)
+
+    super
   end
 
   # rubocop:disable Style/OptionalBooleanParameter
