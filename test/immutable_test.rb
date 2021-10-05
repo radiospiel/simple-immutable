@@ -67,19 +67,22 @@ class Simple::Immutable::TestCase < Test::Unit::TestCase
   end
 
   def test_missing_keys
-    assert_raise(NoMethodError) do
+    assert_raise(NameError) do
       immutable.foo
     end
   end
 
   def test_skip_when_args_or_block
-    # raise NoMethodError when called with arguments
-    assert_raise(NoMethodError) do
+    # raise ArgumentError when called with arguments
+    assert_raise(ArgumentError) do
       immutable.a(1, 2, 3)
     end
+    assert_raise(ArgumentError) do
+      immutable.a(one: 1)
+    end
 
-    # raise NoMethodError when called with a block argument
-    assert_raise(NoMethodError) do
+    # raise ArgumentError when called with a block argument
+    assert_raise(ArgumentError) do
       immutable.a { :dummy }
     end
   end

@@ -64,18 +64,16 @@ class Simple::Immutable
   end
 
   def method_missing(sym, *args, &block)
-    if args.empty? && !block
-      value = SELF.fetch_symbol_or_string_from_hash(@hsh, sym) do
-        SELF.fetch_symbol_or_string_from_hash(@null_record, sym) do
-          # STDERR.puts "Missing attribute #{sym} for Immutable w/#{@hsh.inspect}"
-          super
-        end
-      end
+    raise ArgumentError, "Immutable: called attribute method with arguments" unless args.empty?
+    raise ArgumentError, "Immutable: called attribute method with arguments" if block
 
-      return SELF.create(value)
+    value = SELF.fetch_symbol_or_string_from_hash(@hsh, sym) do
+      SELF.fetch_symbol_or_string_from_hash(@null_record, sym) do
+        raise NameError, "unknown immutable attribute '#{sym}'"
+      end
     end
 
-    super
+    SELF.create(value)
   end
 
   public

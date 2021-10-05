@@ -50,7 +50,7 @@ class Simple::Immutable::WithNullRecordTestCase < Test::Unit::TestCase
   end
 
   def test_missing_keys
-    assert_raise(NoMethodError) do
+    assert_raise(NameError) do
       immutable.unknown
     end
   end
