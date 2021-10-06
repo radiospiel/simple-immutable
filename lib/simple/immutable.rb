@@ -78,16 +78,18 @@ class Simple::Immutable
 
       # Note that sym is now a String. However, we are String/Symbol agnostic
       # (in fetch_symbol_or_string_from_hash), so this is ok.
-      fetch_attribute!(sym, raise_on_missing_attribute: false)
+      fetch_attribute!(sym, raise_when_missing: false)
     else
-      fetch_attribute!(sym, raise_on_missing_attribute: true)
+      fetch_attribute!(sym, raise_when_missing: true)
     end
   end
 
-  def fetch_attribute!(sym, raise_on_missing_attribute:)
+  public
+
+  def fetch_attribute!(sym, raise_when_missing:)
     value = SELF.fetch_symbol_or_string_from_hash(@hsh, sym) do
       SELF.fetch_symbol_or_string_from_hash(@fallback, sym) do
-        raise NameError, "unknown immutable attribute '#{sym}'" if raise_on_missing_attribute
+        raise NameError, "unknown immutable attribute '#{sym}'" if raise_when_missing
 
         nil
       end
@@ -96,10 +98,12 @@ class Simple::Immutable
     SELF.create(value)
   end
 
-  public
-
   def inspect
-    "<#{self.class.name}: #{@hsh.inspect}>"
+    if @fallback
+      "<#{self.class.name}: #{@hsh.inspect}, w/fallback: #{@fallback.inspect}>"
+    else
+      "<#{self.class.name}: #{@hsh.inspect}>"
+    end
   end
 
   def respond_to_missing?(method_name, include_private = false)
